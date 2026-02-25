@@ -1,0 +1,18 @@
+VSCODE可以在服务器安装？
+
+可以。常见有两种方式：
+
+用本机 VS Code + Remote SSH 连接服务器，会在服务器上自动安装 VS Code Server。
+直接在服务器上安装 VS Code Server / code-server（浏览器访问）。
+如果你告诉我服务器系统（Linux/Windows）和是否有图形界面，我可以给你最合适的安装步骤。
+
+Remote SSH是什么
+
+Remote SSH 是 VS Code 的一个拓展功能，它允许你从本地的 VS Code 编辑器通过 SSH 连接到远程机器，
+并在那台机器上“打开”一个完整的 VS Code 工作区：
+
+本地 VS Code 完全照常运行界面、扩展等；
+连接时会在远程主机上自动部署一个轻量级的 VS Code Server 进程；
+所有的文件浏览、编辑、终端、调试、扩展安装等都在远端执行，但界面在你本机显示，数据通过 SSH 隧道传输。
+这样，你就能像在本地开发一样，直接在 Linux/Windows 服务器上编写、运行和调试代码，而无需在服务器上装图形环境。
+只需安装 Remote‑SSH 扩展，配置目标主机的 SSH 信息即可开始使用。

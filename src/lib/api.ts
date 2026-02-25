@@ -19,6 +19,14 @@ export interface ApiError {
   error: string;
 }
 
+function tryParseJson(text: string) {
+  try {
+    return JSON.parse(text);
+  } catch {
+    return null;
+  }
+}
+
 async function request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
   const token = localStorage.getItem('token');
   
@@ -31,18 +39,40 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
     (headers as Record<string, string>)['Authorization'] = `Bearer ${token}`;
   }
 
-  const response = await fetch(`${API_BASE}${endpoint}`, {
-    ...options,
-    headers,
-  });
-
-  const data = await response.json();
-
-  if (!response.ok) {
-    throw new Error((data as ApiError).error || '请求失败');
+  let response: Response;
+  try {
+    response = await fetch(`${API_BASE}${endpoint}`, {
+      ...options,
+      headers,
+    });
+  } catch {
+    throw new Error(`无法连接到服务器（${API_BASE}），请确认后端已启动且网络可达`);
   }
 
-  return data;
+  const rawText = await response.text();
+  const contentType = response.headers.get('content-type') || '';
+  const data = rawText
+    ? (contentType.includes('application/json') ? tryParseJson(rawText) : tryParseJson(rawText) ?? { error: rawText })
+    : null;
+
+  if (!response.ok) {
+    if (response.status === 500 && !rawText.trim()) {
+      throw new Error('后端服务不可达（localhost:3001），请先启动后端服务');
+    }
+
+    const errorMessage =
+      (data as ApiError | null)?.error ||
+      (typeof data === 'string' ? data : '') ||
+      rawText ||
+      `请求失败（${response.status}）`;
+    throw new Error(errorMessage);
+  }
+
+  if (data === null) {
+    return {} as T;
+  }
+
+  return data as T;
 }
 
 export const api = {
