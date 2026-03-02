@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite --port=3008 --host=0.0.0.0",
     "server": "tsx server/index.ts",
-    "dev:all": "concurrently \"npm run server\" \"npm run dev\"",
+    "dev:all:raw": "concurrently \"npm run server\" \"npm run dev\"",
+    "dev:all": "powershell -ExecutionPolicy Bypass -File ./scripts/dev-all.ps1",
     "build": "vite build",
     "preview": "vite preview --port=3008"
   },
