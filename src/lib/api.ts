@@ -11,13 +11,18 @@ export interface User {
 
 export interface AuthResponse {
   message: string;
-  token: string;
   user: User;
 }
 
 export interface ApiError {
   error: string;
 }
+
+let unauthorizedHandler: (() => void) | null = null;
+
+export const setUnauthorizedHandler = (handler: (() => void) | null) => {
+  unauthorizedHandler = handler;
+};
 
 function tryParseJson(text: string) {
   try {
@@ -28,22 +33,17 @@ function tryParseJson(text: string) {
 }
 
 async function request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
-  const token = localStorage.getItem('token');
-  
   const headers: HeadersInit = {
     'Content-Type': 'application/json',
     ...options.headers,
   };
-  
-  if (token) {
-    (headers as Record<string, string>)['Authorization'] = `Bearer ${token}`;
-  }
 
   let response: Response;
   try {
     response = await fetch(`${API_BASE}${endpoint}`, {
       ...options,
       headers,
+      credentials: 'include',
     });
   } catch {
     throw new Error(`无法连接到服务器（${API_BASE}），请确认后端已启动且网络可达`);
@@ -56,8 +56,12 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
     : null;
 
   if (!response.ok) {
+    if (response.status === 401 && unauthorizedHandler) {
+      unauthorizedHandler();
+    }
+
     if (response.status === 500 && !rawText.trim()) {
-      throw new Error('后端服务不可达（localhost:3001），请先启动后端服务');
+      throw new Error('后端服务不可达（localhost:3007），请先启动后端服务');
     }
 
     const errorMessage =
@@ -102,6 +106,11 @@ export const api = {
       request<{ message: string }>('/auth/verify-code', {
         method: 'POST',
         body: JSON.stringify({ phone, code }),
+      }),
+
+    logout: () =>
+      request<{ message: string }>('/auth/logout', {
+        method: 'POST',
       }),
   },
 

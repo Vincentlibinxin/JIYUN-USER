@@ -1,9 +1,36 @@
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../lib/auth';
+import { api, User } from '../lib/api';
 
 export default function ProfilePage() {
   const navigate = useNavigate();
   const { logout } = useAuth();
+  const [profile, setProfile] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  const loadProfile = async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const res = await api.user.getProfile();
+      setProfile(res.user);
+    } catch (err: any) {
+      setError(err?.message || '资料加载失败，请稍后重试');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadProfile();
+  }, []);
+
+  const displayName = profile?.real_name || profile?.username || '未设置';
+  const displayUsername = profile?.username || '---';
+  const displayPhone = profile?.phone || '未绑定';
+  const displayEmail = profile?.email || '未绑定';
 
   return (
     <div className="bg-[#0f1012] font-display text-white antialiased overflow-x-hidden min-h-full relative">
@@ -33,7 +60,7 @@ export default function ProfilePage() {
               <div className="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse"></div>
             </div>
           </div>
-          <h2 className="mt-3 text-xl font-bold text-white tracking-tight">王大明</h2>
+          <h2 className="mt-3 text-xl font-bold text-white tracking-tight">{displayName}</h2>
           <div className="flex items-center gap-1 mt-1 px-2.5 py-0.5 rounded-full bg-[#f48c25]/10 border border-[#f48c25]/20">
             <span className="material-symbols-outlined text-[#f48c25] text-[12px]">stars</span>
             <span className="text-[10px] font-medium text-[#f48c25]">黃金會員</span>
@@ -41,6 +68,19 @@ export default function ProfilePage() {
         </div>
 
         <div className="px-4 mb-4">
+          {error && (
+            <div className="mb-3 bg-red-500/20 border border-red-500/50 text-red-200 rounded-xl px-3 py-2 text-xs flex items-center justify-between">
+              <span>{error}</span>
+              <button onClick={loadProfile} className="ml-3 text-red-100 underline underline-offset-2">重试</button>
+            </div>
+          )}
+
+          {loading && (
+            <div className="mb-3 bg-white/5 border border-white/10 text-white/70 rounded-xl px-3 py-2 text-xs">
+              正在加载用户资料...
+            </div>
+          )}
+
           <div className="bg-[#1e2023]/40 backdrop-blur-md border border-white/5 rounded-2xl p-4 space-y-4 shadow-lg">
             <div className="flex items-center justify-between border-b border-white/5 pb-3">
               <div className="flex items-center gap-3">
@@ -49,7 +89,7 @@ export default function ProfilePage() {
                 </div>
                 <span className="text-xs text-gray-400 font-medium">用戶名</span>
               </div>
-              <span className="text-xs font-display text-white/90 tracking-wide">WangDaMing88</span>
+              <span className="text-xs font-display text-white/90 tracking-wide">{displayUsername}</span>
             </div>
             <div className="flex items-center justify-between border-b border-white/5 pb-3">
               <div className="flex items-center gap-3">
@@ -58,7 +98,7 @@ export default function ProfilePage() {
                 </div>
                 <span className="text-xs text-gray-400 font-medium">手機號碼</span>
               </div>
-              <span className="text-xs font-display text-white/90 tracking-wide">+886 912 345 678</span>
+              <span className="text-xs font-display text-white/90 tracking-wide">{displayPhone}</span>
             </div>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -67,7 +107,7 @@ export default function ProfilePage() {
                 </div>
                 <span className="text-xs text-gray-400 font-medium">電子郵箱</span>
               </div>
-              <span className="text-xs font-display text-white/90 tracking-wide truncate max-w-[150px]">wang@example.com</span>
+              <span className="text-xs font-display text-white/90 tracking-wide truncate max-w-[150px]">{displayEmail}</span>
             </div>
           </div>
         </div>
@@ -101,8 +141,8 @@ export default function ProfilePage() {
               </div>
               <span className="material-symbols-outlined text-gray-600 group-hover:text-[#f48c25] group-hover:translate-x-1 transition-all text-[18px]">chevron_right</span>
             </a>
-            <button onClick={() => {
-              logout();
+            <button onClick={async () => {
+              await logout();
               navigate('/login');
             }} className="w-full flex items-center justify-between p-3.5 hover:bg-white/5 transition-colors group cursor-pointer border-t border-white/5">
               <div className="flex items-center gap-3">

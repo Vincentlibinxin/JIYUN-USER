@@ -98,12 +98,16 @@ export const initDb = async (): Promise<void> => {
     const adminCount = await getAdminCount();
     if (adminCount === 0) {
       const defaultUsername = process.env.DEFAULT_ADMIN_USERNAME || 'admin';
-      const defaultPassword = process.env.DEFAULT_ADMIN_PASSWORD || 'Admin123456';
+      const defaultPassword = process.env.DEFAULT_ADMIN_PASSWORD;
       const defaultEmail = process.env.DEFAULT_ADMIN_EMAIL || 'admin@example.com';
-      const hashed = bcrypt.hashSync(defaultPassword, 10);
 
-      await createAdmin(defaultUsername, hashed, defaultEmail, 'admin');
-      console.log(`[Admin Init] Created default admin account: ${defaultUsername}`);
+      if (defaultPassword && defaultPassword.length >= 12) {
+        const hashed = bcrypt.hashSync(defaultPassword, 10);
+        await createAdmin(defaultUsername, hashed, defaultEmail, 'admin');
+        console.log(`[Admin Init] Created bootstrap admin account: ${defaultUsername}`);
+      } else {
+        console.warn('[Admin Init] Skipped bootstrap admin creation. Set DEFAULT_ADMIN_PASSWORD (>=12 chars) to enable it.');
+      }
     }
   } finally {
     connection.release();

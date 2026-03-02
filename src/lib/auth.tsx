@@ -1,12 +1,12 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { api, User } from './api';
+import { api, setUnauthorizedHandler, User } from './api';
 
 interface AuthContextType {
   user: User | null;
   loading: boolean;
   login: (username: string, password: string) => Promise<void>;
   register: (username: string, password: string, phone?: string, email?: string) => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -16,31 +16,37 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      api.auth.getMe()
-        .then(res => setUser(res.user))
-        .catch(() => localStorage.removeItem('token'))
-        .finally(() => setLoading(false));
-    } else {
-      setLoading(false);
-    }
+    setUnauthorizedHandler(() => {
+      setUser(null);
+    });
+
+    return () => {
+      setUnauthorizedHandler(null);
+    };
+  }, []);
+
+  useEffect(() => {
+    api.auth.getMe()
+      .then(res => setUser(res.user))
+      .catch(() => setUser(null))
+      .finally(() => setLoading(false));
   }, []);
 
   const login = async (username: string, password: string) => {
     const res = await api.auth.login(username, password);
-    localStorage.setItem('token', res.token);
     setUser(res.user);
   };
 
   const register = async (username: string, password: string, phone?: string, email?: string) => {
     const res = await api.auth.register(username, password, phone, email);
-    localStorage.setItem('token', res.token);
     setUser(res.user);
   };
 
-  const logout = () => {
-    localStorage.removeItem('token');
+  const logout = async () => {
+    try {
+      await api.auth.logout();
+    } catch {
+    }
     setUser(null);
   };
 

@@ -12,17 +12,13 @@ export default function LoginPage() {
   const [rememberPassword, setRememberPassword] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  // 页面加载时恢复保存的用户名和密码
+  // 页面加载时恢复保存的用户名
   useEffect(() => {
     const savedUsername = localStorage.getItem('savedUsername');
-    const savedPassword = localStorage.getItem('savedPassword');
-    const isRemembered = localStorage.getItem('rememberPassword') === 'true';
+    const isRemembered = localStorage.getItem('rememberUsername') === 'true';
     
-    if (savedUsername) {
+    if (savedUsername && isRemembered) {
       setUsername(savedUsername);
-    }
-    if (savedPassword && isRemembered) {
-      setPassword(savedPassword);
       setRememberPassword(true);
     }
   }, []);
@@ -35,16 +31,13 @@ export default function LoginPage() {
     try {
       await login(username, password);
       
-      // 保存用户名
-      localStorage.setItem('savedUsername', username);
-      
-      // 根据"记住密码"状态保存或清除密码
+      // 根据“记住账号”状态保存或清除用户名
       if (rememberPassword) {
-        localStorage.setItem('savedPassword', password);
-        localStorage.setItem('rememberPassword', 'true');
+        localStorage.setItem('savedUsername', username);
+        localStorage.setItem('rememberUsername', 'true');
       } else {
-        localStorage.removeItem('savedPassword');
-        localStorage.setItem('rememberPassword', 'false');
+        localStorage.removeItem('savedUsername');
+        localStorage.setItem('rememberUsername', 'false');
       }
       
       navigate('/home');
@@ -146,7 +139,7 @@ export default function LoginPage() {
                   checked={rememberPassword}
                   onChange={(e) => setRememberPassword(e.target.checked)}
                 />
-                <span className="text-xs text-slate-400 group-hover:text-white transition-colors">記住密碼</span>
+                <span className="text-xs text-slate-400 group-hover:text-white transition-colors">記住帳號</span>
               </label>
               <a className="text-xs text-slate-400 hover:text-white transition-colors flex items-center gap-1" href="#">
                 忘記密碼

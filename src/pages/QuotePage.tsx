@@ -79,7 +79,7 @@ export default function QuotePage() {
             <div className="col-span-2">
               <label className="block text-[10px] text-gray-400 mb-1.5 ml-1">預估重量</label>
               <div className="relative">
-                <input className="w-full bg-white text-gray-900 font-semibold text-base px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#f48c25] placeholder:text-gray-300" inputMode="decimal" placeholder="0.0" type="number"/>
+                <input className="w-full bg-white text-gray-900 font-semibold text-base px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#f48c25] placeholder:text-gray-300" inputMode="decimal" placeholder="0.0" type="number" min={0.1} max={9999} step="0.1"/>
                 <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 font-medium text-xs">kg</span>
               </div>
             </div>
@@ -87,15 +87,15 @@ export default function QuotePage() {
               <label className="block text-[10px] text-gray-400 mb-1.5 ml-1">體積 (長 x 寬 x 高)</label>
               <div className="flex gap-2">
                 <div className="relative flex-1">
-                  <input className="w-full bg-white text-gray-900 text-center font-medium px-2 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#f48c25] placeholder:text-gray-300 text-sm" inputMode="numeric" placeholder="L" type="number"/>
+                  <input className="w-full bg-white text-gray-900 text-center font-medium px-2 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#f48c25] placeholder:text-gray-300 text-sm" inputMode="numeric" placeholder="L" type="number" min={1} max={300} step="1"/>
                   <span className="absolute right-2 bottom-1 text-[8px] text-gray-400">cm</span>
                 </div>
                 <div className="relative flex-1">
-                  <input className="w-full bg-white text-gray-900 text-center font-medium px-2 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#f48c25] placeholder:text-gray-300 text-sm" inputMode="numeric" placeholder="W" type="number"/>
+                  <input className="w-full bg-white text-gray-900 text-center font-medium px-2 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#f48c25] placeholder:text-gray-300 text-sm" inputMode="numeric" placeholder="W" type="number" min={1} max={300} step="1"/>
                   <span className="absolute right-2 bottom-1 text-[8px] text-gray-400">cm</span>
                 </div>
                 <div className="relative flex-1">
-                  <input className="w-full bg-white text-gray-900 text-center font-medium px-2 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#f48c25] placeholder:text-gray-300 text-sm" inputMode="numeric" placeholder="H" type="number"/>
+                  <input className="w-full bg-white text-gray-900 text-center font-medium px-2 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#f48c25] placeholder:text-gray-300 text-sm" inputMode="numeric" placeholder="H" type="number" min={1} max={300} step="1"/>
                   <span className="absolute right-2 bottom-1 text-[8px] text-gray-400">cm</span>
                 </div>
               </div>

@@ -23,7 +23,7 @@ export default function ForecastPage() {
           <div className="bg-[#1f1f1f]/50 p-4 rounded-xl border border-white/5 backdrop-blur-sm">
             <label className="block mb-2 text-[10px] font-medium text-gray-400">輸入單號或掃碼</label>
             <div className="relative">
-              <input className="w-full h-10 pl-3 pr-10 bg-white text-gray-900 rounded-lg placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#f48c25]/50 font-medium font-display tracking-wide text-sm" placeholder="請輸入原賣家物流單號" type="text"/>
+              <input className="w-full h-10 pl-3 pr-10 bg-white text-gray-900 rounded-lg placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#f48c25]/50 font-medium font-display tracking-wide text-sm" placeholder="請輸入原賣家物流單號" type="text" maxLength={64} autoComplete="off" inputMode="text"/>
               <button className="absolute inset-y-0 right-0 flex items-center px-3 text-gray-500 hover:text-[#f48c25] transition-colors">
                 <span className="material-symbols-outlined text-[18px]">qr_code_scanner</span>
               </button>
@@ -62,7 +62,7 @@ export default function ForecastPage() {
                   <button className="w-8 h-full flex items-center justify-center text-gray-500 hover:text-[#f48c25]">
                     <span className="material-symbols-outlined text-sm">remove</span>
                   </button>
-                  <input className="w-full text-center bg-transparent text-gray-900 font-bold focus:outline-none p-0 border-none h-full text-sm" type="number" defaultValue="1"/>
+                  <input className="w-full text-center bg-transparent text-gray-900 font-bold focus:outline-none p-0 border-none h-full text-sm" type="number" defaultValue="1" min={1} max={999} />
                   <button className="w-8 h-full flex items-center justify-center text-gray-500 hover:text-[#f48c25]">
                     <span className="material-symbols-outlined text-sm">add</span>
                   </button>
@@ -73,7 +73,7 @@ export default function ForecastPage() {
               <label className="block mb-2 text-[10px] font-medium text-gray-400">申報價值 (RMB)</label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-bold text-sm">¥</span>
-                <input className="w-full h-10 pl-7 pr-4 bg-white text-gray-900 rounded-lg placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#f48c25]/50 font-medium font-display text-sm" placeholder="0.00" type="number"/>
+                <input className="w-full h-10 pl-7 pr-4 bg-white text-gray-900 rounded-lg placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#f48c25]/50 font-medium font-display text-sm" placeholder="0.00" type="number" min={0} max={999999} step="0.01"/>
               </div>
               <p className="text-[10px] text-gray-500 mt-1 pl-1">* 請如實填寫申報價值，以免影響清關。</p>
             </div>
