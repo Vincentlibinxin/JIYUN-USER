@@ -19,7 +19,7 @@ async function continueRegistration() {
   // 步骤1: 验证代码
   console.log('✔️ 步骤1: 验证验证码...');
   try {
-    const verifyResponse = await fetch('http://localhost:3001/api/auth/verify-code', {
+    const verifyResponse = await fetch('http://localhost:3007/api/auth/verify-code', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ 
@@ -53,7 +53,7 @@ async function continueRegistration() {
   console.log('');
 
   try {
-    const registerResponse = await fetch('http://localhost:3001/api/auth/register', {
+    const registerResponse = await fetch('http://localhost:3007/api/auth/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

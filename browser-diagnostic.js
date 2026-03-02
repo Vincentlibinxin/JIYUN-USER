@@ -18,7 +18,7 @@
   // 测试1: 发送SMS
   console.log('\n%c步骤1: 测试发送SMS...', 'color: #0099ff; font-weight: bold');
   try {
-    const smsResponse = await fetch('http://localhost:3001/api/auth/send-sms', {
+    const smsResponse = await fetch('http://localhost:3007/api/auth/send-sms', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ phone: testPhone })
@@ -49,7 +49,7 @@
   // 测试3: 验证代码
   console.log('\n%c步骤3: 验证代码...', 'color: #0099ff; font-weight: bold');
   try {
-    const verifyResponse = await fetch('http://localhost:3001/api/auth/verify-code', {
+    const verifyResponse = await fetch('http://localhost:3007/api/auth/verify-code', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ phone: testPhone, code: testCode })
@@ -72,7 +72,7 @@
   // 测试4: 注册（使用无效的验证码）
   console.log('\n%c步骤4: 尝试注册（未通过验证码）...', 'color: #0099ff; font-weight: bold');
   try {
-    const registerResponse = await fetch('http://localhost:3001/api/auth/register', {
+    const registerResponse = await fetch('http://localhost:3007/api/auth/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

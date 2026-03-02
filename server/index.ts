@@ -4,35 +4,60 @@ import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import authRoutes from './routes/auth';
-import adminRoutes from './routes/admin';
 import { authMiddleware } from './middleware/auth';
 import { getUserById, initDb } from './db';
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3007;
+const HOST = process.env.HOST || (process.env.NODE_ENV === 'production' ? '127.0.0.1' : '0.0.0.0');
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const defaultOrigins = ['http://localhost:3000', 'http://localhost:5173', 'http://192.168.1.35:3000'];
+const defaultOrigins = ['http://localhost:3008', 'http://127.0.0.1:3008'];
 const corsOrigins = (process.env.CORS_ORIGINS || '')
   .split(',')
   .map((origin) => origin.trim())
   .filter((origin) => origin.length > 0);
 
 const resolvedOrigins = corsOrigins.length > 0 ? corsOrigins : defaultOrigins;
+const useStrictOriginList = corsOrigins.length > 0;
+
+const isFrontendOrigin = (origin: string): boolean => {
+  try {
+    const parsed = new URL(origin);
+    return parsed.port === '3008';
+  } catch {
+    return false;
+  }
+};
+
+if (resolvedOrigins.includes('*')) {
+  throw new Error('CORS wildcard (*) is not allowed. Please configure explicit CORS_ORIGINS.');
+}
 
 app.use(cors({
-  origin: resolvedOrigins.includes('*') ? true : resolvedOrigins,
+  origin: (origin, callback) => {
+    if (!origin) {
+      callback(null, true);
+      return;
+    }
+
+    if (resolvedOrigins.includes(origin) || (!useStrictOriginList && isFrontendOrigin(origin))) {
+      callback(null, true);
+      return;
+    }
+
+    callback(new Error('Not allowed by CORS'));
+  },
   credentials: true
 }));
 
 app.use(express.json());
 
-// 提供靜態文件服務（Layui 資源和管理系統 HTML）
+// 提供靜態文件服務
 app.use(express.static(path.join(__dirname, '../public')));
 
 app.use('/api/auth', authRoutes);
-app.use('/api/admin', adminRoutes);
 
 app.get('/api/user/profile', authMiddleware, async (req: any, res) => {
   try {
@@ -62,8 +87,8 @@ app.get('/api/health', (req, res) => {
 
 const startServer = async (): Promise<void> => {
   await initDb();
-  app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+  app.listen(PORT, HOST, () => {
+    console.log(`Server running on http://${HOST}:${PORT}`);
   });
 };
 
