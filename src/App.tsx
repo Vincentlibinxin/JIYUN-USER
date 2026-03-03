@@ -21,6 +21,10 @@ function AuthLoadingScreen() {
   );
 }
 
+function AuthSilentScreen() {
+  return <div className="min-h-screen bg-[#0f1012]" />;
+}
+
 function ProtectedLayout() {
   const { user, loading } = useAuth();
 
@@ -39,7 +43,7 @@ function GuestOnlyRoute({ children }: { children: JSX.Element }) {
   const { user, loading } = useAuth();
 
   if (loading) {
-    return <AuthLoadingScreen />;
+    return <AuthSilentScreen />;
   }
 
   if (user) {
