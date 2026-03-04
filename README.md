@@ -41,7 +41,10 @@ npm run dev:all
 
 ```bash
 VITE_API_BASE=http://localhost:3007/api
+VITE_AUTO_LOGOUT_MINUTES=1800
 ```
+
+`VITE_AUTO_LOGOUT_MINUTES` 用于配置前端“无操作自动登出”时长（单位：分钟，默认 `1800`）。
 
 启动前请确保后端服务已运行在 `3007` 端口，并允许当前设备访问。
 
